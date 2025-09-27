@@ -1,0 +1,221 @@
+{
+  "RentalOffers": [
+    {
+      "name": "Уютная квартира в центре города",
+      "offerDescription": "Идеальное место для романтического отдыха или деловых поездок.",
+      "publicationDate": "2024-09-30T15:45:12.000Z",
+      "city": "Paris",
+      "previewUrl": "https://example.com/preview",
+      "housingImages": [
+        "https://example.com/images/0",
+        "https://example.com/images/1",
+        "https://example.com/images/2",
+        "https://example.com/images/3",
+        "https://example.com/images/4",
+        "https://example.com/images/5"
+      ],
+      "isPremium": true,
+      "isFavorite": false,
+      "rating": 4.8,
+      "housingType": "apartment",
+      "roomsCount": 2,
+      "guestsCount": 4,
+      "rentalCost": 80000,
+      "convenienceList": ["Washer", "Fridge"],
+      "author": "https://example.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 48.85661,
+        "longitude": 2.351499
+      }
+    },
+    {
+      "name": "Стильный домик в горах",
+      "offerDescription": "Отличное место для семейного отдыха и прогулок на свежем воздухе.",
+      "publicationDate": "2024-09-30T10:22:45.000Z",
+      "city": "Brussels",
+      "previewUrl": "https://example2.com/preview",
+      "housingImages": [
+        "https://example2.com/images/0",
+        "https://example2.com/images/1",
+        "https://example2.com/images/2",
+        "https://example2.com/images/3",
+        "https://example2.com/images/4",
+        "https://example2.com/images/5"
+      ],
+      "isPremium": false,
+      "isFavorite": true,
+      "rating": 4.5,
+      "housingType": "house",
+      "roomsCount": 3,
+      "guestsCount": 6,
+      "rentalCost": 60000,
+      "convenienceList": ["Laptop friendly workspace", "Baby seat"],
+      "author": "https://example2.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 50.846557,
+        "longitude": 4.351697
+      }
+    },
+    {
+      "name": "Просторный номер в хостеле",
+      "offerDescription": "Подходит для бюджетных путешественников, есть все необходимое.",
+      "publicationDate": "2024-09-30T12:15:00.000Z",
+      "city": "Hamburg",
+      "previewUrl": "https://example3.com/preview",
+      "housingImages": [
+        "https://example3.com/images/0",
+        "https://example3.com/images/1",
+        "https://example3.com/images/2",
+        "https://example3.com/images/3",
+        "https://example3.com/images/4",
+        "https://example3.com/images/5"
+      ],
+      "isPremium": true,
+      "isFavorite": false,
+      "rating": 4.0,
+      "housingType": "room",
+      "roomsCount": 1,
+      "guestsCount": 8,
+      "rentalCost": 1500,
+      "convenienceList": ["Air conditioning"],
+      "author": "https://example3.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 53.550341,
+        "longitude": 10.000654
+      }
+    },
+    {
+      "name": "Люкс в центре столицы",
+      "offerDescription": "Роскошный номер с видом на город, идеально подходит для романтических поездок.",
+      "publicationDate": "2024-09-30T11:30:00.000Z",
+      "city": "Berlin",
+      "previewUrl": "https://example4.com/preview",
+      "housingImages": [
+        "https://example4.com/images/0",
+        "https://example4.com/images/1",
+        "https://example4.com/images/2"
+      ],
+      "isPremium": true,
+      "isFavorite": false,
+      "rating": 5.0,
+      "housingType": "apartment",
+      "roomsCount": 1,
+      "guestsCount": 2,
+      "rentalCost": 120000,
+      "convenienceList": ["TV", "Wi-Fi"],
+      "author": "https://example4.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 52.520008,
+        "longitude": 13.404954
+      }
+    },
+    {
+      "name": "Уютный коттедж на природе",
+      "offerDescription": "Идеально подходит для отдыха с семьей, есть мангал и площадка для пикника.",
+      "publicationDate": "2024-09-30T09:45:12.000Z",
+      "city": "Amsterdam",
+      "previewUrl": "https://example5.com/preview",
+      "housingImages": [
+        "https://example5.com/images/0",
+        "https://example5.com/images/1",
+        "https://example5.com/images/2"
+      ],
+      "isPremium": false,
+      "isFavorite": true,
+      "rating": 4.6,
+      "housingType": "house",
+      "roomsCount": 3,
+      "guestsCount": 5,
+      "rentalCost": 90000,
+      "convenienceList": ["Grill", "Parking"],
+      "author": "https://example5.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 52.3676,
+        "longitude": 4.9041
+      }
+    },
+    {
+      "name": "Квартира-студия на пляже",
+      "offerDescription": "Отличный выбор для любителей моря и солнца.",
+      "publicationDate": "2024-09-30T14:00:00.000Z",
+      "city": "Barcelona",
+      "previewUrl": "https://example6.com/preview",
+      "housingImages": [
+        "https://example6.com/images/0",
+        "https://example6.com/images/1",
+        "https://example6.com/images/2"
+      ],
+      "isPremium": true,
+      "isFavorite": false,
+      "rating": 4.7,
+      "housingType": "studio",
+      "roomsCount": 1,
+      "guestsCount": 2,
+      "rentalCost": 85000,
+      "convenienceList": ["Ocean view", "Balcony"],
+      "author": "https://example6.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 41.3851,
+        "longitude": 2.1734
+      }
+    },
+    {
+      "name": "Современный лофт в бизнес-районе",
+      "offerDescription": "Подходит для деловых поездок и краткосрочной аренды.",
+      "publicationDate": "2024-09-30T16:15:00.000Z",
+      "city": "London",
+      "previewUrl": "https://example7.com/preview",
+      "housingImages": [
+        "https://example7.com/images/0",
+        "https://example7.com/images/1",
+        "https://example7.com/images/2"
+      ],
+      "isPremium": false,
+      "isFavorite": true,
+      "rating": 4.3,
+      "housingType": "loft",
+      "roomsCount": 2,
+      "guestsCount": 3,
+      "rentalCost": 75000,
+      "convenienceList": ["Conference room", "Wi-Fi"],
+      "author": "https://example7.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 51.5074,
+        "longitude": -0.1278
+      }
+    },
+    {
+      "name": "Семейный апартамент у озера",
+      "offerDescription": "Идеальное место для семейного отдыха, рядом с природой.",
+      "publicationDate": "2024-09-30T18:00:00.000Z",
+      "city": "Zurich",
+      "previewUrl": "https://example8.com/preview",
+      "housingImages": [
+        "https://example8.com/images/0",
+        "https://example8.com/images/1",
+        "https://example8.com/images/2"
+      ],
+      "isPremium": true,
+      "isFavorite": false,
+      "rating": 4.9,
+      "housingType": "apartment",
+      "roomsCount": 2,
+      "guestsCount": 4,
+      "rentalCost": 100000,
+      "convenienceList": ["Kayak", "Fishing"],
+      "author": "https://example8.com/author",
+      "commentsCount": 1,
+      "offerCoordinates": {
+        "latitude": 47.376886,
+        "longitude": 8.541694
+      }
+    }
+  ]
+}
