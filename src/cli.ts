@@ -2,22 +2,18 @@
 
 import chalk from 'chalk';
 import fs from 'node:fs';
+import axios from 'axios';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RentalOffer } from './models/rental-offer.js';
-import { City } from './models/city.enum.js';
-import { HousingType } from './models/housing-type.enum.js';
-import { Convenience } from './models/convenience.enum.js';
+import { TSVWriter } from './TSVWriter.js';
+import { TSVReader } from './TSVReader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const version = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
 ).version;
-
-function parseEnum<T>(enumObj: T, key: string): T[keyof T] {
-  return enumObj[key as keyof T];
-}
 
 const showHelp = () => {
   console.log(chalk.blue('Список команд:'));
@@ -26,48 +22,39 @@ const showHelp = () => {
   console.log(`${chalk.green('--import <filename>:')} импортирует данные из TSV-файла`);
 };
 
-const importData = (filePath: string): RentalOffer[] | undefined => {
+const importData = async (filePath: string): Promise<void> => {
+  const reader: TSVReader = new TSVReader(filePath);
+  let readNext = true;
 
-  if (!fs.existsSync(filePath)) {
-    console.error(chalk.red('Файл не найден!'));
-    return;
+  while (readNext){
+    const result = await reader.getRentalOffer();
+    if (!result) {
+      readNext = false;
+      continue;
+    }
+    const [rentalOffer, countRentalOffers] = result as [RentalOffer, number];
+    console.log(chalk.green(`Успешно импортированы : ${countRentalOffers} предложений аренды`), rentalOffer);
   }
-
-  const data = fs.readFileSync(filePath, 'utf-8');
-  const lines = data.split('\n');
-
-  const offers: RentalOffer[] = lines.map((line) => {
-    const fields = line.split('\t');
-    const rentalOffer: RentalOffer = {
-      name: fields[0],
-      offerDescription: fields[1],
-      publicationDate: new Date(fields[2]),
-      city: parseEnum(City, fields[3]),
-      previewUrl: fields[4],
-      housingImages: fields[5] as unknown as string[],
-      isPremium: fields[6] === 'true',
-      isFavorite: fields[7] === 'true',
-      rating: parseFloat(fields[8]),
-      housingType: parseEnum(HousingType, fields[9]),
-      roomsCount: parseInt(fields[10], 10),
-      guestsCount: parseInt(fields[11], 10),
-      rentalCost: parseInt(fields[12], 10),
-      convenienceList: fields[13] as unknown as Convenience[],
-      author: fields[14],
-      commentsCount: parseInt(fields[15], 10),
-      offerCoordinates: {
-        latitude: parseFloat(fields[16]),
-        longitude: parseFloat(fields[16]),
-      },
-    };
-    return rentalOffer;
-  });
-
-  console.log(chalk.green('Данные успешно импортированы:'), offers);
-  return offers;
 };
 
-const [, , command, args] = process.argv;
+const generateData = async (countRentalOffers: number, filePath: string, url: string): Promise<void> => {
+  try {
+    const response = await axios.get<RentalOffer[]>(url);
+    const availableData = response.data;
+
+    const tsvGenerator = new TSVWriter(filePath);
+    for (let i = 0; i < countRentalOffers; i++) {
+      const randomItem = availableData[Math.floor(Math.random() * availableData.length)];
+      tsvGenerator.addRentalOffer(randomItem);
+    }
+    tsvGenerator.end();
+
+  } catch (error) {
+    console.error('Ошибка при получении данных с JSON-сервера:', error);
+  }
+};
+
+const [, , command, ...args] = process.argv;
 switch (command) {
   case '--help':
     showHelp();
@@ -76,8 +63,18 @@ switch (command) {
     console.log(chalk.yellow(`Версия приложения: ${version}`));
     break;
   case '--import':
-    importData(args);
+    {
+      const [filePath] = args;
+      importData(filePath);
+    }
     break;
+  case '--generate':
+  {
+    const [nArg, filePath, url] = args;
+    const countRentalOffers: number = parseInt(nArg, 10);
+    generateData(countRentalOffers, filePath, url);
+    break;
+  }
   default:
     showHelp();
 }
