@@ -1,9 +1,9 @@
 import * as fs from 'node:fs';
 import * as readline from 'node:readline';
-import { RentalOffer } from './models/rental-offer.js';
-import { City } from './models/city.enum.js';
-import { HousingType } from './models/housing-type.enum.js';
-import { Convenience } from './models/convenience.enum.js';
+import { City } from '../models/city.enum.js';
+import { Convenience } from '../models/convenience.enum.js';
+import { HousingType } from '../models/housing-type.enum.js';
+import { RentalOffer } from '../models/rental-offer.js';
 
 function parseEnum<T>(enumObj: T, key: string): T[keyof T] {
   return enumObj[key as keyof T];
@@ -16,18 +16,19 @@ export class TSVReader {
 
   constructor(filePath: string) {
     this.readStream = fs.createReadStream(filePath, { encoding: 'utf-8' });
-    this.getNextLine = readline.createInterface({
-      input: this.readStream,
-      crlfDelay: Infinity,
-    })[Symbol.asyncIterator]();
+    this.getNextLine = readline
+      .createInterface({
+        input: this.readStream,
+        crlfDelay: Infinity,
+      })[Symbol.asyncIterator]();
     this.countRentalOffers = 0;
   }
 
-  public async getRentalOffer(): Promise<[RentalOffer, number] | boolean> {
+  public async getRentalOffer(): Promise<[RentalOffer, number] | undefined> {
     const { value, done } = await this.getNextLine.next();
     if (done) {
       this.readStream.close();
-      return false;
+      return undefined;
     }
     this.countRentalOffers++;
     const rentalOffer = this.parseRentalOffer(value.split('\t'));

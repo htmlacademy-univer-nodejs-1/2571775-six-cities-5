@@ -1,5 +1,5 @@
 import * as fs from 'node:fs';
-import { RentalOffer } from './models/rental-offer.js';
+import { RentalOffer } from '../models/rental-offer.js';
 
 export class TSVWriter {
   private writeStream: fs.WriteStream;
@@ -10,7 +10,9 @@ export class TSVWriter {
     if (this.fileExist(this.filePath)) {
       fs.writeFileSync(filePath, '');
     }
-    this.writeStream = fs.createWriteStream(this.filePath, { encoding: 'utf-8' });
+    this.writeStream = fs.createWriteStream(this.filePath, {
+      encoding: 'utf-8',
+    });
   }
 
   public addRentalOffer(offer: RentalOffer): void {
@@ -47,7 +49,7 @@ export class TSVWriter {
       offer.convenienceList.join(', '),
       offer.author,
       offer.commentsCount,
-      `${offer.offerCoordinates.latitude}, ${offer.offerCoordinates.longitude}`
+      `${offer.offerCoordinates.latitude}, ${offer.offerCoordinates.longitude}`,
     ].join('\t');
   }
 }
