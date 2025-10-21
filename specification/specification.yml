@@ -1,0 +1,857 @@
+openapi: 3.0.0
+info:
+  title: Six Cities Rent API
+  description: API для проекта «Шесть городов»
+  version: 1.0.0
+
+servers:
+  - url: https://localhost:3000/api
+    description: Локальный сервер разработки
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            write: modify objects in your account
+            read: read objects in your account
+          authorizationUrl: https://example.com/oauth/authorize
+          tokenUrl: https://example.com/oauth/token
+
+  schemas:
+    guid:
+      type: string
+      pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      description: Токен в формате GUID
+    401:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Unauthorized"
+          pattern: ^example-[0-9a-z]+$
+          maxLength: 32
+        message:
+          type: string
+          example: "Authentication required or failed."
+          maxLength: 32
+          pattern: ^example-[0-9a-z]+$
+        code:
+          type: integer
+          example: 401
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          maxLength: 32
+          format: guid
+        name:
+          type: string
+          pattern: "^[A-Za-zА-Яа-яЁёs-]{1,50}$"
+          maxLength: 15
+        email:
+          type: string
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+          maxLength: 32
+        avatar:
+          type: string
+          nullable: true
+          maxLength: 32
+          pattern: ^example-[0-9a-z]+$
+        userType:
+          type: string
+          maxLength: 32
+          pattern: ^example-[0-9a-z]+$
+      additionalProperties: false
+
+    CreateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 15
+          pattern: "^[A-Za-zА-Яа-яЁёs-]{1,15}$"
+        email:
+          type: string
+          format: email
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+          maxLength: 32
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 32
+          pattern: ^example-[0-9a-z]+$
+        password:
+          type: string
+          minLength: 6
+          maxLength: 12
+          pattern: ^example-[0-9a-z]+$
+        userType:
+          type: string
+          enum:
+            - Basic
+            - Pro
+      additionalProperties: false
+
+    UserWithoutPassword:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 15
+          pattern: "^[A-Za-zА-Яа-яЁёs-]{1,15}$"
+        email:
+          type: string
+          format: email
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+          maxLength: 32
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 32
+          pattern: ^example-[0-9a-z]+$
+        userType:
+          type: string
+          enum:
+            - Basic
+            - Pro
+      additionalProperties: false
+
+    LoginRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          format: email
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+          maxLength: 32
+        password:
+          type: string
+          minLength: 6
+          maxLength: 12
+          pattern: "^example-[0-9a-z]+$"
+      additionalProperties: false
+
+    Offer:
+      type: object
+      properties:
+        name:
+          type: string
+          pattern: "^[A-Za-z0-9s-]{1,50}$"
+          description: Название предложения
+        offerDescription:
+          type: string
+          description: Описание предложения
+        publicationDate:
+          type: string
+          format: date-time
+          description: Дата публикации предложения
+        city:
+          type: string
+          pattern: "^[A-Za-zs]{2,30}$"
+          description: Город, где находится предложение
+        previewUrl:
+          type: string
+          format: uri
+          description: URL изображения превью
+        housingImages:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: Список изображений жилья
+        isPremium:
+          type: boolean
+          description: Признак премиум предложения
+        isFavorite:
+          type: boolean
+          description: Признак избранного предложения
+        rating:
+          type: number
+          format: float
+          description: Рейтинг предложения (например, от 1 до 5)
+        housingType:
+          type: string
+          enum:
+            - apartment
+            - house
+            - studio
+            - villa
+          description: Тип жилья
+        roomsCount:
+          type: integer
+          description: Количество комнат в предложении
+        guestsCount:
+          type: integer
+          description: Максимальное количество гостей
+        rentalCost:
+          type: integer
+          description: Стоимость аренды в валюте
+        convenienceList:
+          type: array
+          items:
+            type: string
+          description: Список удобств, доступных в предложении
+        author:
+          type: string
+          description: Автор предложения
+        commentsCount:
+          type: integer
+          description: Количество комментариев для предложения
+        offerCoordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+              description: Широта
+            longitude:
+              type: number
+              format: float
+              description: Долгота
+          description: Координаты предложения
+      required:
+        - name
+        - offerDescription
+        - publicationDate
+        - city
+        - previewUrl
+        - housingImages
+        - isPremium
+        - isFavorite
+        - rating
+        - housingType
+        - roomsCount
+        - guestsCount
+        - rentalCost
+        - convenienceList
+        - author
+        - commentsCount
+        - offerCoordinates
+      additionalProperties: false
+
+    GetRentalOffer:
+      type: object
+      properties:
+        name:
+          type: string
+          pattern: "^[A-Za-z0-9s-]{1,50}$"
+          description: Название предложения
+        publicationDate:
+          type: string
+          format: date-time
+          description: Дата публикации предложения
+        city:
+          type: string
+          pattern: "^[A-Za-zs]{2,30}$"
+          description: Город, где находится предложение
+        previewUrl:
+          type: string
+          format: uri
+          description: URL изображения превью
+        housingImages:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: Список изображений жилья
+        isPremium:
+          type: boolean
+          description: Признак премиум предложения
+        isFavorite:
+          type: boolean
+          description: Признак избранного предложения
+        rating:
+          type: number
+          format: float
+          description: Рейтинг предложения (например, от 1 до 5)
+        housingType:
+          type: string
+          enum:
+            - apartment
+            - house
+            - studio
+            - villa
+          description: Тип жиль
+        rentalCost:
+          type: integer
+          description: Стоимость аренды в валюте
+        commentsCount:
+          type: integer
+          description: Количество комментариев для предложения
+      required:
+        - name
+        - publicationDate
+        - city
+        - previewUrl
+        - housingImages
+        - isPremium
+        - isFavorite
+        - rating
+        - housingType
+        - rentalCost
+        - commentsCount
+      additionalProperties: false
+
+    Comment:
+      type: object
+      properties:
+        text:
+          type: string
+          pattern: "^[A-Za-z0-9s,.-]{1,500}$"
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        createdAt:
+          type: string
+          format: date-time
+          maxLength: 32
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+              pattern: "^[A-Za-zА-Яа-яЁёs-]{1,50}$"
+      additionalProperties: false
+
+paths:
+  /users:
+    post:
+      summary: Создание нового пользователя
+      operationId: createUser
+      requestBody:
+        description: Данные для нового пользователя
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUser"
+      responses:
+        "201":
+          description: Пользователь успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithoutPassword"
+        "400":
+          description: Неверные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithoutPassword"
+
+  /login:
+    post:
+      summary: Вход в приложение
+      operationId: loginUser
+      security:
+        - OAuth2:
+            - write
+            - read
+      requestBody:
+        description: Данные для входа
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Успешный вход, токен возвращен
+          headers:
+            Authorization:
+              description: Токен доступа, возвращаемый в заголовке
+              schema:
+                type: string
+                format: guid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Вход успешен"
+        "401":
+          description: Неверные учетные данные
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+
+  /authentication:
+    post:
+      summary: Завершение сеанса
+      operationId: closeSession
+      security:
+        - OAuth2:
+            - write
+            - read
+      responses:
+        "200":
+          description: Сессия завершена
+          headers:
+            Authorization:
+              description: Токен доступа, возвращаемый в заголовке
+              schema:
+                type: string
+                format: guid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Сессия завершена"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+    get:
+      summary: Получить информацию о пользователе
+      operationId: getUserInfo
+      security:
+        - OAuth2:
+            - read
+      responses:
+        "200":
+          description: Информация о пользователе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithoutPassword"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+
+  /offers:
+    post:
+      summary: Создание нового предложения
+      operationId: createOffer
+      security:
+        - OAuth2:
+            - write
+      requestBody:
+        description: Данные для нового предложения
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Offer"
+      responses:
+        "200":
+          description: Созданное предложение
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/Offer"
+        "400":
+          description: Неверные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+
+    get:
+      summary: Получить список предложений
+      operationId: getOffers
+      parameters:
+        - name: city
+          in: query
+          description: Город для фильтрации предложений
+          required: true
+          schema:
+            type: string
+            enum:
+              - Paris
+              - Cologne
+              - Brussels
+              - Amsterdam
+              - Hamburg
+              - Dusseldorf
+            pattern: "^[A-Za-zs]{2,30}$"
+        - name: limit
+          in: query
+          description: Количество предложений для отображения
+          schema:
+            type: integer
+            default: 60
+            maximum: 1000
+            minimum: 1
+        - name: sortBy
+          in: query
+          description: Параметр для сортировки предложений
+          schema:
+            type: string
+            enum:
+              - date
+              - price
+            pattern: "^(date|price)$"
+      responses:
+        "200":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GetRentalOffer"
+                maxItems: 60
+        "400":
+          description: Неверные данные запроса
+          content:
+            string:
+              example: "city не указан"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+
+  /offers/premium:
+    get:
+      summary: Получить список премиальных предложений для города
+      operationId: getPremiumOffers
+      parameters:
+        - name: city
+          in: query
+          description: Город для фильтрации премиальных предложений
+          required: true
+          schema:
+            type: string
+            enum:
+              - Paris
+              - Cologne
+              - Brussels
+              - Amsterdam
+              - Hamburg
+              - Dusseldorf
+            pattern: "^[A-Za-zs]{2,30}$"
+        - name: limit
+          in: query
+          description: Количество премиальных предложений для отображения (не более 3)
+          schema:
+            type: integer
+            default: 3
+            maximum: 3
+            minimum: 1
+        - name: sortBy
+          in: query
+          description: Параметр для сортировки предложений
+          schema:
+            type: string
+            enum:
+              - date
+            default: date
+            pattern: "^date$"
+      responses:
+        "200":
+          description: Список премиальных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GetRentalOffer"
+                maxItems: 3
+        "400":
+          description: Неверные данные запроса
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "city не указан"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+        "404":
+          description: Премиальные предложения не найдены для указанного города
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Премиальные предложения не найдены"
+
+  /favorites/{offerId}:
+    post:
+      summary: Добавить предложение в избранное
+      operationId: addOfferToFavorites
+      security:
+        - OAuth2:
+            - write
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: Идентификатор предложения, которое нужно добавить в избранное
+          schema:
+            type: string
+            maxLength: 32
+            format: guid
+      responses:
+        "200":
+          description: Предложение успешно добавлено в избранное
+        "401":
+          description: Ошибка аутентификации, доступ к ресурсу только для авторизованных пользователей
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+        "404":
+          description: Предложение с указанным ID не найдено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Not Found"
+
+    delete:
+      summary: Удалить предложение из избранного
+      operationId: removeOfferFromFavorites
+      security:
+        - OAuth2:
+            - write
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: Идентификатор предложения, которое нужно удалить из избранного
+          schema:
+            type: string
+            maxLength: 32
+            format: guid
+      responses:
+        "200":
+          description: Предложение успешно удалено из избранного
+        "401":
+          description: Ошибка аутентификации, доступ к ресурсу только для авторизованных пользователей
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+        "404":
+          description: Предложение с указанным ID не найдено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Not Found"
+
+  /offers/favorites:
+    get:
+      summary: Получить список избранных предложений
+      operationId: getFavoriteOffers
+      security:
+        - OAuth2:
+            - read
+      responses:
+        "200":
+          description: Список избранных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GetRentalOffer"
+                maxItems: 100
+        "401":
+          description: Ошибка аутентификации, доступ к избранным предложениям только для авторизованных пользователей
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+
+  /offers/{offerId}:
+    put:
+      summary: Обновление предложения
+      operationId: updateOffer
+      security:
+        - OAuth2:
+            - write
+      requestBody:
+        description: Данные для обновления предложения
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Offer"
+      responses:
+        "200":
+          description: Обновленное предложение
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/Offer"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+    delete:
+      summary: Удаление предложения
+      operationId: deleteOffer
+      security:
+        - OAuth2:
+            - write
+      responses:
+        "200":
+          description: Удаленное предложение
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/Offer"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+    get:
+      summary: Получить детальную информацию о предложении
+      operationId: getOfferDetails
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: Идентификатор предложения
+          schema:
+            type: string
+            maxLength: 32
+            format: guid
+      responses:
+        "200":
+          description: Информация о предложении
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+        "401":
+          description: Информация о предложении
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+        "404":
+          description: Предложение не найдено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+
+  /offers/{offerId}/comments:
+    get:
+      summary: Получить список комментариев для предложения
+      operationId: getCommentsForOffer
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: Идентификатор предложения
+          schema:
+            type: string
+            format: guid
+            maxLength: 32
+      responses:
+        "200":
+          description: Список комментариев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+                maxItems: 50
+        "400":
+          description: Неверные данные запроса
+          content:
+            string:
+              example: "offerId не Guid"
+        "401":
+          description: Информация о предложении
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
+        "404":
+          description: Коммент не найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+
+  /offers/{offerId}/comment:
+    post:
+      summary: Создание нового комментария
+      operationId: createComment
+      security:
+        - OAuth2:
+            - write
+      requestBody:
+        description: Данные для нового комментария
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+      responses:
+        "201":
+          description: Комментарий успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "400":
+          description: Неверные данные запроса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401"
