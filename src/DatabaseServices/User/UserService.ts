@@ -1,26 +1,18 @@
 import { injectable } from 'inversify';
-import { IUser, UserType } from '../../models/index.js';
+import { IUser } from '../../models/index.js';
 import { User } from '../../schemas/index.js';
 import { IUserService } from './IUserService.js';
+import { CreateUserDto } from '../../dtoModels/index.js';
+import bcrypt from 'bcrypt';
 
 @injectable()
 export class UserService implements IUserService<IUser> {
-  async findById(id: string): Promise<IUser | null> {
-    return User.findById(id).exec();
-  }
+  private readonly saltRounds = 10;
 
-  async findOne(query: { email: string }): Promise<IUser | null> {
-    return User.findOne(query).exec();
-  }
-
-  async create(data: {
-    name: string;
-    email: string;
-    avatar?: string;
-    password: string;
-    type: UserType;
-  }): Promise<IUser> {
-    const newUser = new User(data);
+  async create(dto: CreateUserDto): Promise<IUser> {
+    const hashedPassword = await bcrypt.hash(dto.password, this.saltRounds);
+    const userToSave = { ...dto, password: hashedPassword };
+    const newUser = new User(userToSave);
     return newUser.save();
   }
 }

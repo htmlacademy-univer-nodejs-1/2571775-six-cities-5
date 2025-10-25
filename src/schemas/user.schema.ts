@@ -13,6 +13,7 @@ const userSchema = new Schema<IUser>(
       enum: Object.values(UserType),
       required: true,
     },
+    favoriteOffers: [{ type: Schema.Types.ObjectId, ref: 'RentalOffer' }],
   },
   {
     timestamps: true,

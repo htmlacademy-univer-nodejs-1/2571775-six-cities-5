@@ -1,10 +1,6 @@
 import { Document } from 'mongoose';
+import { CreateUserDto } from '../../dtoModels/index.js';
 
 export interface IUserService<T extends Document> {
-
-  findById(id: string): Promise<T | null>;
-
-  findOne(query: object): Promise<T | null>;
-
-  create(data: Partial<T>): Promise<T>;
+create(dto: CreateUserDto): Promise<T>;
 }

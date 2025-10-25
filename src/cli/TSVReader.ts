@@ -53,9 +53,10 @@ export class TSVReader {
       convenienceList: fields[13].split(';') as Convenience[],
       author: fields[14],
       commentsCount: parseInt(fields[15], 10),
+      averageRating: parseInt(fields[16], 10),
       offerCoordinates: {
-        latitude: parseFloat(fields[16].split(', ')[0]),
-        longitude: parseFloat(fields[16].split(', ')[1]),
+        latitude: parseFloat(fields[17].split(', ')[0]),
+        longitude: parseFloat(fields[17].split(', ')[1]),
       },
     };
   }

@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { UserType } from './user-type.enum.js';
+import { UserType } from './index.js';
 
 export interface IUser extends Document {
   name: string;
@@ -7,6 +7,7 @@ export interface IUser extends Document {
   avatar?: string;
   password: string;
   type: UserType;
+  favoriteOffers: string[];
 }
 
 export type User = {
