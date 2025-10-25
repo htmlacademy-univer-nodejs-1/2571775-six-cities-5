@@ -20,6 +20,7 @@ const rentalOfferSchema = new Schema(
     guestsCount: { type: Number, required: true },
     rentalCost: { type: Number, required: true },
     convenienceList: { type: [String], enum: Object.values(Convenience), required: true },
+    averageRating: { type: Number, required: true },
     author: { type: String, required: true },
     commentsCount: { type: Number, required: true },
     offerCoordinates: {

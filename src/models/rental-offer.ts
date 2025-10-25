@@ -1,8 +1,5 @@
 import { Document } from 'mongoose';
-import { City } from './city.enum.js';
-import { Convenience } from './convenience.enum.js';
-import { Coordinate } from './coordinate.type.js';
-import { HousingType } from './housing-type.enum.js';
+import { City, Convenience, Coordinate, HousingType } from './index.js';
 
 export interface IRentalOffer extends Document {
   name: string;
@@ -21,6 +18,7 @@ export interface IRentalOffer extends Document {
   convenienceList: Convenience[];
   author: string;
   commentsCount: number;
+  averageRating: number;
   offerCoordinates: Coordinate;
 }
 
@@ -41,5 +39,6 @@ export type RentalOffer = {
   convenienceList: Convenience[];
   author: string;
   commentsCount: number;
+  averageRating: number;
   offerCoordinates: Coordinate;
 }

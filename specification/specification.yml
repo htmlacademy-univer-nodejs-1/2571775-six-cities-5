@@ -41,33 +41,8 @@ components:
         code:
           type: integer
           example: 401
-    User:
-      type: object
-      properties:
-        userId:
-          type: string
-          maxLength: 32
-          format: guid
-        name:
-          type: string
-          pattern: "^[A-Za-zА-Яа-яЁёs-]{1,50}$"
-          maxLength: 15
-        email:
-          type: string
-          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
-          maxLength: 32
-        avatar:
-          type: string
-          nullable: true
-          maxLength: 32
-          pattern: ^example-[0-9a-z]+$
-        userType:
-          type: string
-          maxLength: 32
-          pattern: ^example-[0-9a-z]+$
-      additionalProperties: false
 
-    CreateUser:
+    CreateUserDto:
       type: object
       properties:
         name:
@@ -98,7 +73,7 @@ components:
             - Pro
       additionalProperties: false
 
-    UserWithoutPassword:
+    GetUserDto:
       type: object
       properties:
         name:
@@ -139,7 +114,7 @@ components:
           pattern: "^example-[0-9a-z]+$"
       additionalProperties: false
 
-    Offer:
+    CreateRentalOfferDto:
       type: object
       properties:
         name:
@@ -198,6 +173,14 @@ components:
           type: array
           items:
             type: string
+            enum:
+            - Breakfast
+            - 'Air conditioning'
+            - 'Laptop friendly workspace'
+            - 'Baby seat'
+            - Washer
+            - Towels
+            - Fridge
           description: Список удобств, доступных в предложении
         author:
           type: string
@@ -333,20 +316,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateUser"
+              $ref: "#/components/schemas/CreateUserDto"
       responses:
         "201":
           description: Пользователь успешно создан
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserWithoutPassword"
+                $ref: "#/components/schemas/GetUserDto"
         "400":
           description: Неверные данные запроса
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserWithoutPassword"
+                $ref: "#/components/schemas/GetUserDto"
 
   /login:
     post:
@@ -430,7 +413,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserWithoutPassword"
+                $ref: "#/components/schemas/GetUserDto"
         "401":
           description: Ошибка аутентификации
           content:
@@ -451,7 +434,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Offer"
+              $ref: "#/components/schemas/CreateRentalOfferDto"
       responses:
         "200":
           description: Созданное предложение
@@ -460,13 +443,13 @@ paths:
               schema:
                 type: object
                 items:
-                  $ref: "#/components/schemas/Offer"
+                  $ref: "#/components/schemas/CreateRentalOfferDto"
         "400":
           description: Неверные данные запроса
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Offer"
+                $ref: "#/components/schemas/CreateRentalOfferDto"
         "401":
           description: Ошибка аутентификации
           content:
@@ -712,7 +695,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Offer"
+              $ref: "#/components/schemas/CreateRentalOfferDto"
       responses:
         "200":
           description: Обновленное предложение
@@ -721,7 +704,7 @@ paths:
               schema:
                 type: object
                 items:
-                  $ref: "#/components/schemas/Offer"
+                  $ref: "#/components/schemas/CreateRentalOfferDto"
         "401":
           description: Ошибка аутентификации
           content:
@@ -742,7 +725,7 @@ paths:
               schema:
                 type: object
                 items:
-                  $ref: "#/components/schemas/Offer"
+                  $ref: "#/components/schemas/CreateRentalOfferDto"
         "401":
           description: Ошибка аутентификации
           content:
@@ -767,7 +750,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Offer"
+                $ref: "#/components/schemas/CreateRentalOfferDto"
         "401":
           description: Информация о предложении
           content:
@@ -779,7 +762,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Offer"
+                $ref: "#/components/schemas/CreateRentalOfferDto"
 
   /offers/{offerId}/comments:
     get:
