@@ -1,14 +1,12 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import mongoose from 'mongoose';
-import { Component } from '../shared/types/component.emun.js';
+import { Component } from '../shared/types/component.js';
 import { Logger } from 'pino';
 
 @injectable()
 export class DB {
-  constructor(
-    @inject(Component.Logger) private readonly logger: Logger,
-  ) {}
+  constructor(@inject(Component.Logger) private readonly logger: Logger) {}
 
   async connectToDatabase(url: string): Promise<void> {
     this.logger.info('Попытка установить соединение с базой данных...');

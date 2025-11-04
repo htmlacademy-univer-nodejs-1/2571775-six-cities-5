@@ -1,9 +1,10 @@
 import * as fs from 'node:fs';
 import * as readline from 'node:readline';
+import { HousingType } from '../../shared/enums/housing-type.enum.js';
 import { City } from '../models/city.enum.js';
 import { Convenience } from '../models/convenience.enum.js';
-import { HousingType } from '../models/housing-type.enum.js';
-import { RentalOffer } from '../models/rental-offer.js';
+import { CreateOfferDto } from '../../shared/libs/modules/offer/index.js';
+import { Types } from 'mongoose';
 
 function parseEnum<T>(enumObj: T, key: string): T[keyof T] {
   return enumObj[key as keyof T];
@@ -24,7 +25,7 @@ export class TSVReader {
     this.countRentalOffers = 0;
   }
 
-  public async getRentalOffer(): Promise<[RentalOffer, number] | undefined> {
+  public async getRentalOffer(): Promise<[CreateOfferDto, number] | undefined> {
     const { value, done } = await this.getNextLine.next();
     if (done) {
       this.readStream.close();
@@ -35,8 +36,9 @@ export class TSVReader {
     return [rentalOffer, this.countRentalOffers];
   }
 
-  public parseRentalOffer(fields: string[]): RentalOffer {
+  public parseRentalOffer(fields: string[]): CreateOfferDto {
     return {
+      id: '',
       name: fields[0],
       offerDescription: fields[1],
       publicationDate: new Date(fields[2]),
@@ -51,13 +53,23 @@ export class TSVReader {
       guestsCount: parseInt(fields[11], 10),
       rentalCost: parseInt(fields[12], 10),
       convenienceList: fields[13].split(';') as Convenience[],
-      author: fields[14],
+      author: this.normalizeToObjectId(Buffer.from(fields[14]).toString('hex')),
       commentsCount: parseInt(fields[15], 10),
-      averageRating: parseInt(fields[16], 10),
+      averageRating: parseFloat(fields[16]),
       offerCoordinates: {
         latitude: parseFloat(fields[17].split(', ')[0]),
         longitude: parseFloat(fields[17].split(', ')[1]),
       },
     };
+  }
+
+  private normalizeToObjectId(idString: string): Types.ObjectId {
+    if (idString.length < 24) {
+      idString = idString.padEnd(24, '0');
+    } else if (idString.length > 24) {
+      idString = idString.substring(0, 24);
+    }
+
+    return new Types.ObjectId(idString);
   }
 }

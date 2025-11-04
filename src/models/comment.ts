@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { User } from './user.js';
+import { User } from '../../shared/types/user.js';
 import { RentalOffer } from './index.js';
 
 export interface IComment extends Document {
