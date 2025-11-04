@@ -1,5 +1,5 @@
+import { CreateCommentDto } from '../../dtoModels/comment/create-comment.dto.js';
 import { Comment, User } from '../../models/index.js';
-import { CreateCommentDto } from '../../dtoModels/index.js';
 
 export interface ICommentService {
   getCommentsForOffer(offerId: string): Promise<Comment[]>;

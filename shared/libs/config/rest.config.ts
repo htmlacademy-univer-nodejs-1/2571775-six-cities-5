@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { inject, injectable } from 'inversify';
-import { Component } from '../../types/component.emun.js';
+import { Component } from '../../types/component.js';
 import { Logger } from '../logger/index.js';
 import { Config } from './config.interface.js';
 import { configRestSchema, RestSchema } from './rest.schema.js';

@@ -1,8 +1,8 @@
 import { ICommentService } from './ICommentService.js';
 import { IComment } from '../../models/index.js';
-import { CreateCommentDto } from '../../dtoModels/index.js';
 import { Comment, RentalOffer } from '../../schemas/index.js';
 import { User } from '../../models/index.js';
+import { CreateCommentDto } from '../../dtoModels/comment/create-comment.dto.js';
 
 export class CommentService implements ICommentService {
 

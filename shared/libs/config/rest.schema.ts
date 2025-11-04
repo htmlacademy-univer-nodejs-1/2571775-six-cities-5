@@ -4,6 +4,10 @@ import validators from 'convict-format-with-validator';
 convict.addFormats(validators);
 
 export type RestSchema = {
+  DB_USER: string;
+  DB_PASSWORD: string;
+  DB_PORT: number;
+  DB_NAME: string;
   PORT: number;
   SALT: string;
   DB_HOST: string;
@@ -28,4 +32,28 @@ export const configRestSchema = convict<RestSchema>({
     env: 'DB_HOST',
     default: '127.0.0.1',
   },
+  DB_USER: {
+    doc: 'Database user',
+    format: String,
+    env: 'DB_USER',
+    default: 'name',
+  },
+  DB_PASSWORD: {
+    doc: 'Database password',
+    format: String,
+    env: 'DB_PASSWORD',
+    default: 'test',
+  },
+  DB_PORT: {
+    doc: 'Database port',
+    format: 'port',
+    env: 'DB_PORT',
+    default: 5454
+  },
+  DB_NAME: {
+    doc: 'Database name',
+    format: String,
+    env: 'DB_NAME',
+    default: 'base'
+  }
 });

@@ -49,6 +49,7 @@ export class TSVWriter {
       offer.convenienceList.join(', '),
       offer.author,
       offer.commentsCount,
+      offer.averageRating,
       `${offer.offerCoordinates.latitude}, ${offer.offerCoordinates.longitude}`,
     ].join('\t');
   }
