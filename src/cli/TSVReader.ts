@@ -4,7 +4,6 @@ import { HousingType } from '../../shared/enums/housing-type.enum.js';
 import { City } from '../models/city.enum.js';
 import { Convenience } from '../models/convenience.enum.js';
 import { CreateOfferDto } from '../../shared/libs/modules/offer/index.js';
-import { Types } from 'mongoose';
 
 function parseEnum<T>(enumObj: T, key: string): T[keyof T] {
   return enumObj[key as keyof T];
@@ -63,13 +62,13 @@ export class TSVReader {
     };
   }
 
-  private normalizeToObjectId(idString: string): Types.ObjectId {
+  private normalizeToObjectId(idString: string): string {
     if (idString.length < 24) {
       idString = idString.padEnd(24, '0');
     } else if (idString.length > 24) {
       idString = idString.substring(0, 24);
     }
 
-    return new Types.ObjectId(idString);
+    return idString;
   }
 }

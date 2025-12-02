@@ -26,7 +26,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   private password?: string;
 
   @prop({ required: true })
-  public type = UserType.Basic;
+  public type: UserType;
 
   @prop({ type: () => [String], default: [] })
   public favorites!: string[];

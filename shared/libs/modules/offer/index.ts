@@ -11,4 +11,5 @@ export * from './requests/edit-offer-request.type.js';
 export * from './dto/delete-offer.dto.js';
 export * from './dto/get-all-offer.dto.js';
 export * from './requests/get-all-offer-request.type.js';
-export * from './type/param-get-all.type.js';
+export * from './dto/offer.dto.js';
+export * from './type/param-offerId.type.js';
