@@ -14,11 +14,11 @@ export abstract class BaseController implements Controller {
 
   constructor(
         protected readonly logger: Logger
-  ){
+  ) {
     this._router = Router();
   }
 
-  get router(){
+  get router() {
     return this._router;
   }
 

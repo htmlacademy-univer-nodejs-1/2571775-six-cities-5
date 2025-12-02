@@ -8,7 +8,7 @@ import { DocumentType, types } from '@typegoose/typegoose';
 export class DefaultOfferService implements OfferService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
-    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>
+    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
@@ -52,5 +52,10 @@ export class DefaultOfferService implements OfferService {
 
     this.logger.info(`Offer ${offerId} deleted.`);
     return offer;
+  }
+
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.offerModel
+      .exists({_id: documentId})) !== null;
   }
 }

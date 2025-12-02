@@ -1,21 +1,23 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-import { BaseController, HttpError, ValidateObjectIdMiddleware } from '../../rest/index.js';
+import { BaseController, HttpError, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../../rest/index.js';
 import { Logger } from '../../logger/logger.interface.js';
 import { Component, HttpMethod } from '../../../types/index.js';
 import { CreateOfferDto, OfferService, CreateOfferRdo,
   CreateOfferRequest, EditOfferRequest,
   EditOfferDto, DeleteOfferDto,
-  GetAllOfferRequest,
-  GetAllOfferDto} from './index.js';
+  ParamOfferId,
+  GetAllOfferRequest} from './index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { StatusCodes } from 'http-status-codes';
+import { CommentRdo, CommentService } from '../comment/index.js';
 
 @injectable()
 export class OfferController extends BaseController {
   constructor(
       @inject(Component.Logger) protected readonly logger: Logger,
       @inject(Component.OfferService) private readonly offerService: OfferService,
+      @inject(Component.CommentService) private readonly commentService: CommentService,
   ){
     super(logger);
 
@@ -26,7 +28,18 @@ export class OfferController extends BaseController {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [new ValidateObjectIdMiddleware('offerId')]});
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateOfferDto)]
+    });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.getAll,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+    });
   }
 
   public async create(
@@ -83,7 +96,12 @@ export class OfferController extends BaseController {
   public async getAll({ body } : GetAllOfferRequest,
     res: Response): Promise<void> {
     const result = await this.offerService.findAll(body.city, body.limit, body.sortBy);
-    this.ok(res, fillDTO(GetAllOfferDto, result));
+    this.ok(res, fillDTO(CreateOfferDto, result));
+  }
+
+  public async getComments({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const comments = await this.commentService.findByOfferId(params.offerId);
+    this.ok(res, fillDTO(CommentRdo, comments));
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
