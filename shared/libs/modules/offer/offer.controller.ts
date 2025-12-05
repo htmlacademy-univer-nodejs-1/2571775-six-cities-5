@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-import { BaseController, HttpError, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../../rest/index.js';
+import { BaseController, DocumentExistsMiddleware, HttpError, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../../rest/index.js';
 import { Logger } from '../../logger/logger.interface.js';
 import { Component, HttpMethod } from '../../../types/index.js';
 import { CreateOfferDto, OfferService, CreateOfferRdo,
@@ -27,7 +27,7 @@ export class OfferController extends BaseController {
       path: '/:offerId',
       method: HttpMethod.Get,
       handler: this.index,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')]});
+      middlewares: [new ValidateObjectIdMiddleware('offerId'), new DocumentExistsMiddleware(offerService, 'offer', 'offerId')]});
     this.addRoute({
       path: '/',
       method: HttpMethod.Post,
@@ -38,7 +38,7 @@ export class OfferController extends BaseController {
       path: '/',
       method: HttpMethod.Get,
       handler: this.getAll,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+      middlewares: []
     });
   }
 

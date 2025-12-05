@@ -30,4 +30,9 @@ export class DefaultCommentService implements CommentService {
       .find({offerId})
       .populate('userId');
   }
+
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.commentModel
+      .exists({_id: documentId})) !== null;
+  }
 }
