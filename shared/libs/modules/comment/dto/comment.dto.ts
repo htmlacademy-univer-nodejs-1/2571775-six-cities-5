@@ -16,6 +16,8 @@ export class CommentDto {
   @Max(5, {message: CommentValidationMessage.rating.maxValue})
   public rating!: number;
 
-  @IsMongoId({message: CommentValidationMessage.authorId.invalidId})
   public authorId!: string;
+
+  @IsMongoId({ message: CommentValidationMessage.offerId.invalidFormat })
+  public offerId!: string;
 }

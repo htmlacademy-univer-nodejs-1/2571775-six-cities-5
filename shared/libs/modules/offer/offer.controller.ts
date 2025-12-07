@@ -42,21 +42,10 @@ export class OfferController extends BaseController {
     });
   }
 
-  public async create(
-    { body }: CreateOfferRequest,
-    res: Response): Promise<void> {
-    const existOffer = await this.offerService.findById(body.id);
-
-    if (existOffer) {
-      throw new HttpError(
-        StatusCodes.UNPROCESSABLE_ENTITY,
-        `Category with name «${body.name}» exists.`,
-        'CategoryController'
-      );
-    }
-
-    const result = await this.offerService.create(body);
-    this.created(res, fillDTO(CreateOfferDto, result));
+  public async create({ body, tokenPayload }: CreateOfferRequest, res: Response): Promise<void> {
+    const result = await this.offerService.create({ ...body, userId: tokenPayload.id });
+    const offer = await this.offerService.findById(result.id);
+    this.created(res, fillDTO(CreateOfferRdo, offer));
   }
 
   public async edit(
@@ -93,9 +82,9 @@ export class OfferController extends BaseController {
     this.ok(res, fillDTO(DeleteOfferDto, result));
   }
 
-  public async getAll({ body } : GetAllOfferRequest,
+  public async getAll({ body, tokenPayload } : GetAllOfferRequest,
     res: Response): Promise<void> {
-    const result = await this.offerService.findAll(body.city, body.limit, body.sortBy);
+    const result = await this.offerService.findAll(tokenPayload ? tokenPayload.id : undefined, body.city, body.limit, body.sortBy);
     this.ok(res, fillDTO(CreateOfferDto, result));
   }
 
@@ -104,8 +93,8 @@ export class OfferController extends BaseController {
     this.ok(res, fillDTO(CommentRdo, comments));
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const offers = await this.offerService.findAll();
+  public async index({ tokenPayload }: Request, res: Response): Promise<void> {
+    const offers = await this.offerService.findAll(tokenPayload ? tokenPayload.id : undefined);
     const responseData = fillDTO(CreateOfferRdo, offers);
     this.ok(res, responseData);
   }

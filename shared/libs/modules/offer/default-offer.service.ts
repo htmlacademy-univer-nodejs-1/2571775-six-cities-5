@@ -3,12 +3,14 @@ import { OfferService, CreateOfferDto, OfferEntity, EditOfferDto } from './index
 import { Component } from '../../../types/index.js';
 import { Logger } from '../../logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
+import { UserService } from '../user/index.js';
 
 @injectable()
 export class DefaultOfferService implements OfferService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
+    @inject(Component.UserService) private readonly userService: UserService,
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
@@ -21,9 +23,20 @@ export class DefaultOfferService implements OfferService {
     return this.offerModel.findById(id).exec();
   }
 
-  public async findAll(city?: string, limit = 60, sortBy: 'date' | 'price' = 'date'): Promise<DocumentType<OfferEntity>[]> {
+  public async findAll(userId?: string, city?: string, limit = 60, sortBy: 'date' | 'price' = 'date'): Promise<DocumentType<OfferEntity>[]> {
     const filter = city ? { city } : {};
-    return this.offerModel.find(filter).sort({ [sortBy]: 1 }).limit(limit).exec();
+    const offers = await this.offerModel.find(filter).sort({ [sortBy]: 1 }).limit(limit).exec();
+    if (userId) {
+      const favouriteIds = new Set((await this.userService.getFavorites(userId)).map((offer) => offer._id));
+      offers.forEach((offer) => {
+        offer.isFavorite = favouriteIds.has(offer._id);
+      });
+    }
+
+    offers.forEach((offer) => {
+      offer.isFavorite = false;
+    });
+    return offers;
   }
 
   public async findPremium(city: string, limit = 3): Promise<DocumentType<OfferEntity>[]> {
@@ -57,5 +70,12 @@ export class DefaultOfferService implements OfferService {
   public async exists(documentId: string): Promise<boolean> {
     return (await this.offerModel
       .exists({_id: documentId})) !== null;
+  }
+
+  public async incCommentCount(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+    return this.offerModel
+      .findByIdAndUpdate(offerId, {'$inc': {
+        commentCount: 1,
+      }}).exec();
   }
 }

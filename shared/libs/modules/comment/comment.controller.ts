@@ -1,18 +1,20 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-import { BaseController, HttpError, ValidateDtoMiddleware, ValidateObjectIdMiddleware, DocumentExistsMiddleware } from '../../rest/index.js';
+import { BaseController, HttpError, PrivateRouteMiddleware, ValidateDtoMiddleware, ValidateObjectIdMiddleware, DocumentExistsMiddleware } from '../../rest/index.js';
 import { Logger } from '../../logger/logger.interface.js';
 import { Component, HttpMethod } from '../../../types/index.js';
-import { CommentDto, CommentService } from './index.js';
+import { CommentDto, CommentRdo, CommentService } from './index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { CreateCommentRequest } from './requests/create-comment-request.js';
+import { OfferService } from '../offer/index.js';
 
 @injectable()
 export class CommentController extends BaseController {
   constructor(
         @inject(Component.Logger) protected readonly logger: Logger,
         @inject(Component.CommentService) private readonly commentService: CommentService,
+        @inject(Component.OfferService) private readonly offerService: OfferService
   ){
     super(logger);
 
@@ -28,25 +30,27 @@ export class CommentController extends BaseController {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CommentDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CommentDto)]
     });
   }
 
   public async create(
-    { body }: CreateCommentRequest,
-    res: Response): Promise<void> {
-    const existComment = await this.commentService.findById(body.id);
-
-    if (existComment) {
+    { body, tokenPayload }: CreateCommentRequest,
+    res: Response
+  ): Promise<void> {
+    if (! await this.offerService.exists(body.offerId)) {
       throw new HttpError(
-        StatusCodes.UNPROCESSABLE_ENTITY,
-        `Comment with id «${body.id}» exists.`,
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${body.offerId} not found.`,
         'CommentController'
       );
     }
 
-    const result = await this.commentService.create(body);
-    this.created(res, fillDTO(CommentDto, result));
+    const comment = await this.commentService.create({ ...body, authorId: tokenPayload.id });
+    await this.offerService.incCommentCount(body.offerId);
+    this.created(res, fillDTO(CommentRdo, comment));
   }
 
   public async findById(commentId: string, res: Response): Promise<void> {
