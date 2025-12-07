@@ -14,4 +14,7 @@ export const CommentValidationMessage = {
   authorId: {
     invalidId: 'authorId must be a valid mongoId',
   },
+  offerId: {
+    invalidFormat: 'offerId must be a valid mongoId',
+  }
 } as const;

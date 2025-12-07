@@ -9,9 +9,11 @@ export const Component = {
   DatabaseClient: Symbol.for('DatabaseClient'),
   UserModel: Symbol.for('UserModel'),
   OfferModel: Symbol.for('OfferModel'),
-  CommentModel: Symbol.for('Comment.Model'),
+  CommentModel: Symbol.for('CommentModel'),
   OfferController: Symbol.for('OfferController'),
   CommentController: Symbol.for('CommentController'),
   ExceptionFilter: Symbol.for('ExceptionFilter'),
   UserController: Symbol.for('UserController'),
+  AuthService: Symbol.for('AuthService'),
+  AuthExceptionFilter: Symbol.for('AuthExceptionFilter'),
 } as const;
